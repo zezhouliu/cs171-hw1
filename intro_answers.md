@@ -9,5 +9,7 @@ We could improve the display of the table by adding a summary section on top of 
 
     2b) United Nation World Food Programme
         - Link: http://cdn.wfp.org/hungermap/
-        - Reasons why it's better: Similar to the previous example, this website uses a creative way to display their tabular data in an interactive and clear way.  
+        - Reasons why it's better: Similar to the previous example, this website uses a creative way to display their tabular data in an interactive and clear way.  Instead of simply displaying the data in a table, the main view of the webpage is a large interactive map, while the table is displayed on a sidepanel that dynamically changes as you select different options.  In this case, you can select none, one, or many different flags around the map that will aggregate the data from the different regions and then display on the side-panel.  Moreover, on the side-panel, there are selective tabs that you can choose in order to separate the related information.  For example, one tab has the general description of the hunger levels in the specific areas, another has the specific values and numbers associated with the data, etc.  
+        
+    2c) 
 
