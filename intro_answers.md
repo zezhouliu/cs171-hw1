@@ -1,0 +1,13 @@
+1. If we were interested in understanding summary statistics at a glance (minimum, maximum, etc.), how could you improve the display of the table?
+
+We could improve the display of the table by adding a summary section on top of the table that includes several significant data points (i.e. the min, max, mean, etc).  We could also include a visual by adding a boxplot that graphically displays the significant data points in order to better convey the information.
+
+2. Find three varied examples on the web that present tabular data in a different layout or in more visually compelling, complete, interactive or interesting ways.
+    2a) Population Reference Bureau.  
+        - Link: http://www.prb.org/Publications/Datasheets/2011/world-population-data-sheet/world-map.aspx#/table/population
+        - Reasons why it's better: The tabular data displays the world's population in a useful way because there are several categories (region, 2011 population, 2050 estimate, natural increase %, and 2050 population as a multiple of 2011) that can be selected as a filter to sort the data.  Specific table rows that are of particular importance (like categories) are highlighted with a different background color.  It also lets you filter out specific regions around the world, and even let you select to view the data as a map alongside the table.  The map is colorfully labeled and also has additional options to selectively view the data.
+
+    2b) United Nation World Food Programme
+        - Link: http://cdn.wfp.org/hungermap/
+        - Reasons why it's better: Similar to the previous example, this website uses a creative way to display their tabular data in an interactive and clear way.  
+
