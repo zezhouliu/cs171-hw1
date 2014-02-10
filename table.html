@@ -11,13 +11,16 @@
 <body>
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script>
-  d3.tsv("unemp_states_us_nov_2013.tsv", function(error, data){
+  d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
+
+      // store the parsed data
+      var parsedData = d3.tsv.parseRows(data);
 
       var table = d3.select("body").append("table"),
       tbody = table.append("tbody");
 
       var rows = tbody.selectAll("tr")
-      .data(data)
+      .data(parsedData)
       .enter()
       .append("tr");
 
