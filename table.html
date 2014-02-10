@@ -6,32 +6,103 @@
 
   <style type="text/css">
   /* YOUR CSS */
+  body * {
+    line-height: 1.22em;
+  }
+
+  .main-content th, .main-content td {
+    padding: 3px;
+    border-spacing: 0px;
+    border-color: gray;
+    border: 1px;
+  }
+
+  td, th {
+      border-spacing: 0px;
+      border-color: gray;
+      border: 1px;
+  }
+
+  #caption {
+    width: 100%;
+    height: 100%;
+  }
+
   </style>
 </head>
 <body>
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script>
+
   d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
+      
+      var zebraFunction = function(d, i) {
+          if (i % 2 === 1) 
+            return "#FFFFFF";
+          else
+            return "#C0C0C0"; 
+      };
 
       var parsedData = d3.tsv.parseRows(data);
       var headerData = parsedData.shift();
-      console.log(headerData);
 
-      var table = d3.select("body").append("table"),
-      
+      // Add the h1 to top of page
+      var header1 = d3.select("body").append("h1")
+      .text("Unemployment Rates for States"); 
+
+      // add the table
+      var table = d3.select("body").append("table")
+      .append("class", "main-content"),
       thead = table.append("thead");
+      tbody = table.append("tbody");
+      
+      // Add stuff to the thead 
+      thead.append("tr")
+      .append("caption")
+      .attr("id", "caption")
+      .attr("colspan", "3")
+      .html("Unemployment Rates for States Monthly Rankings Seasonally Adjusted");
+
+      // Add the column headers
       var head = thead.selectAll("th")
       .data(headerData)
       .enter()
       .append("th")
-      .text(function(d) { return d;});
+      .text(function(d) { return d;})
+      .on("click", function (d) {
+  
+        var index = headerData.indexOf(d);
+        
+        tbody.selectAll("tr").sort(function(a, b) {
 
-      tbody = table.append("tbody");
+            // if equal priority, sort by name
+            if (d3.ascending(a[index], b[index]) == 0) {
+                return d3.ascending(a[1], b[1]);
+            }
+
+            return d3.ascending(a[index], b[index]);
+
+        })
+          
+        .style("background-color", zebraFunction);
+        
+      })
+
+      
+      // Add stuff to the table bodies
       var rows = tbody.selectAll("tr")
       .data(parsedData)
       .enter()
-      .append("tr");
-
+      .append("tr")
+      .style("background-color", zebraFunction)
+      .on("mouseover", function(d, i) {
+          d3.select(this).style("background-color", "#FFFF00");
+      })
+      .on("mouseout", function(d, i) {
+          d3.select(this).style("background-color", zebraFunction(d,i));
+          
+      });
+      
       var cells = rows.selectAll("td")
       .data(function(row) {
         return d3.range(Object.keys(row).length).map(function(column, i) {
@@ -42,7 +113,8 @@
       .append("td")
       .text(function(d) { return d; });
       });
-    
+
+
   </script>
 </body>
 </html>
