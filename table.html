@@ -13,12 +13,20 @@
   <script>
   d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
 
-      // store the parsed data
       var parsedData = d3.tsv.parseRows(data);
+      var headerData = parsedData.shift();
+      console.log(headerData);
 
       var table = d3.select("body").append("table"),
-      tbody = table.append("tbody");
+      
+      thead = table.append("thead");
+      var head = thead.selectAll("th")
+      .data(headerData)
+      .enter()
+      .append("th")
+      .text(function(d) { return d;});
 
+      tbody = table.append("tbody");
       var rows = tbody.selectAll("tr")
       .data(parsedData)
       .enter()
@@ -34,6 +42,7 @@
       .append("td")
       .text(function(d) { return d; });
       });
+    
   </script>
 </body>
 </html>
