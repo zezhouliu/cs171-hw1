@@ -52,7 +52,7 @@
 
       // add the table
       var table = d3.select("body").append("table")
-      .append("class", "main-content"),
+      .attr("class", "main-content"),
       thead = table.append("thead");
       tbody = table.append("tbody");
       
@@ -70,6 +70,11 @@
       .append("th")
       .text(function(d) { return d;})
       .on("click", function (d, i) {
+        
+        var index = headerData.indexOf(d);
+        if (index < 1) {
+          return;
+        }
 
         // Add a static property as a counter to track
         // the number of times the sorting filter is clicked
@@ -82,35 +87,54 @@
 
         // reference to this
         var category = this;
-        var index = headerData.indexOf(d);
         
         tbody.selectAll("tr").sort(function(a, b) {
 
-            // if odd # of times clicked, sort by increasing order
-            if (category.staticCounter % 2 == 0) {
+          // if odd # of times clicked, sort by increasing order
+          if (category.staticCounter % 2 == 1) {
 
-                // if equal priority, sort by name
-                if (d3.ascending(a[index], b[index]) == 0) {
-                    return d3.ascending(a[1], b[1]);
-                }
-
-                return d3.ascending(a[index], b[index]);
+            // if equal priority, sort by name
+            if (d3.ascending(a[index], b[index]) == 0) {
+              return d3.ascending(a[1], b[1]);
             }
-            else {
-                
-                // if equal priority, sort by name
-                if (d3.descending(a[index], b[index]) == 0) {
-                    return d3.descending(a[1], b[1]);
-                }
 
-                return d3.descending(a[index], b[index]);
-
+            return d3.ascending(a[index], b[index]);
+          }
+          else {
+              
+            // if equal priority, sort by name
+            if (d3.descending(a[index], b[index]) == 0) {
+              return d3.descending(a[1], b[1]);
             }
+
+            return d3.descending(a[index], b[index]);
+
+          }
         })
           
         .style("background-color", zebraFunction);
         
       })
+      .on("mouseover", function(d, i) {
+        
+        console.log(this);
+        var th = d3.select(this);
+
+        // Add a static property as a counter to track
+        // the number of times the sorting filter is clicked
+        if (!this.staticCounter) {
+            this.staticCounter = 0;
+        }
+
+        // if sorted in decreasing order, then show ascending flag
+        if (this.staticCounter % 2 == 0) {
+          th.attr("class", "descending"); 
+        }
+        else {
+          th.attr("class", "ascending");
+        }
+
+      });
 
       
       // Add stuff to the table bodies
@@ -120,11 +144,10 @@
       .append("tr")
       .style("background-color", zebraFunction)
       .on("mouseover", function(d, i) {
-          d3.select(this).style("background-color", "#FFFF00");
+        d3.select(this).style("background-color", "#FFFF00");
       })
       .on("mouseout", function(d, i) {
-          d3.select(this).style("background-color", zebraFunction(d,i));
-          
+        d3.select(this).style("background-color", zebraFunction(d, this.rowIndex - 1));
       });
       
       var cells = rows.selectAll("td")
