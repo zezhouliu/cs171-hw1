@@ -69,19 +69,43 @@
       .enter()
       .append("th")
       .text(function(d) { return d;})
-      .on("click", function (d) {
-  
+      .on("click", function (d, i) {
+
+        // Add a static property as a counter to track
+        // the number of times the sorting filter is clicked
+        if (!this.staticCounter) {
+            this.staticCounter = 0;
+        }
+
+        this.staticCounter++;
+        console.log(this.staticCounter);
+
+        // reference to this
+        var category = this;
         var index = headerData.indexOf(d);
         
         tbody.selectAll("tr").sort(function(a, b) {
 
-            // if equal priority, sort by name
-            if (d3.ascending(a[index], b[index]) == 0) {
-                return d3.ascending(a[1], b[1]);
+            // if odd # of times clicked, sort by increasing order
+            if (category.staticCounter % 2 == 0) {
+
+                // if equal priority, sort by name
+                if (d3.ascending(a[index], b[index]) == 0) {
+                    return d3.ascending(a[1], b[1]);
+                }
+
+                return d3.ascending(a[index], b[index]);
             }
+            else {
+                
+                // if equal priority, sort by name
+                if (d3.descending(a[index], b[index]) == 0) {
+                    return d3.descending(a[1], b[1]);
+                }
 
-            return d3.ascending(a[index], b[index]);
+                return d3.descending(a[index], b[index]);
 
+            }
         })
           
         .style("background-color", zebraFunction);
