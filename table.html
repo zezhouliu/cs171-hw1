@@ -153,7 +153,13 @@
       .data(parsedData)
       .enter()
       .append("tr")
-      .style("background-color", zebraFunction);
+      .style("background-color", zebraFunction)
+      .on("mouseover", function(d, i) {
+        d3.select(this).style("background-color", "#FFFF00");
+      })
+      .on("mouseout", function(d, i) {
+        d3.select(this).style("background-color", zebraFunction(d, this.rowIndex - 1));
+      });
       
       var cells = rows.selectAll("td")
       .data(function(row) {
