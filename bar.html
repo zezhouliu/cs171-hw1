@@ -13,6 +13,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Add Filter Labels --!> 
+  <label><input type="radio" name="order" value="state"> State</label>
+  <label><input type="radio" name="order" value="rate" checked> Rate</label>
+
   <script type="text/javascript">
 
     var margin = {top: 50, bottom: 10, left:300, right: 40};
@@ -48,10 +53,44 @@
         .append("g")
         .attr("transform", function(d, i) { return "translate(0, " + yScale(d.State) +")"; });
 
+      var header = g
+        .append("text")
+        .text("Unemployment Rates for States")
+        .style("font-size", 20)
+        .style("font-weight", "bold");
+
       var bars = groups
         .append("rect")
         .attr("width", function(d) { return xScale(d.Rate); })
         .attr("height", bar_height);
+
+      // Add text for the row values
+      groups.append("text")
+        .attr("x", function(d) { return xScale(d.Rate); })
+        .attr("y", function(d) { return bar_height/2; })
+        .text(function(d) { return d.Rate; })
+        .attr("dx", function(d) { 
+            // dynamically size based on textsize + slight padding
+            return -1 * (this.getBBox().width + 3);
+        })
+        .attr("dy", function(d) {
+            // add a little padding
+            return 2;
+        });
+
+      // Add the text labels for the rows
+      groups.append("text")
+        .attr("x", function(d) { return 0; })
+        .attr("y", function(d) { return bar_height/2; })
+        .text(function(d) { return d.State; })
+        .attr("dx", function(d) { 
+            // dynamically size based on textsize + slight padding
+            return -1 * (this.getBBox().width + 3);
+        })
+        .attr("dy", function(d) {
+            // add a little padding
+            return 2;
+        })
 
     });
   </script>
