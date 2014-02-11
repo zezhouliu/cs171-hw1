@@ -69,15 +69,6 @@
 
         header.staticCounter++;
         
-        var th = d3.select(header);
-        // if sorted in decreasing order, then show ascending flag
-        if (this.staticCounter % 2 == 0) {
-          th.attr("class", "descending"); 
-        }
-        else {
-          th.attr("class", "ascending");
-        }
-        
         tbody.selectAll("tr").sort(function(a, b) {
 
           // if odd # of times clicked, sort by increasing order
@@ -188,28 +179,50 @@
         d3.selectAll("td.col_" + i)
           .style('background-color', "#FFFF00");
       })
-      .on('mouseout', function(d, i){
+      .on('mouseout', function(d, i) {
         d3.selectAll("td.col_" + i)
-          .style('background-color', null);
+          .style('background-color', function (d, i) {
+          
+              var min = d3.min(d3.selectAll("tbody td.col_2")[0], function(td) {
+                return Math.min(td.innerHTML);
+              });
+              var max = d3.max(d3.selectAll("tbody td.col_2")[0], function(td) {
+                return Math.max(td.innerHTML);
+              });
+          
+              var color = d3.scale.linear()
+                .domain([min, max])
+                .interpolate(d3.interpolateRgb)
+                .range(["green", "silver"]);
+                
+              return color(d);
+          });
       })
       .style("background-color", function (d, i) {
-      
+
         if (i == 2) {
-          
+          var min = d3.min(d3.selectAll("tbody td.col_2")[0], function(td) {
+            return Math.min(td.innerHTML);
+          });
+          var max = d3.max(d3.selectAll("tbody td.col_2")[0], function(td) {
+            return Math.max(td.innerHTML);
+          });
+      
           var color = d3.scale.linear()
-            .domain([0, tbody.selectAll("tr")[0].length-1])
+            .domain([min, max])
             .interpolate(d3.interpolateRgb)
             .range(["green", "silver"]);
             
           return color(d);
         }
-          
-           
       });
       
-      console.log(d3.max(parsedData, function(d) { return d.column1; }));
+      /*var max = d3.max(d3.selectAll("td.col_2")[0], function(td) {
+        //return d3.max(td.innerHTML);
+      });
+      */
       
-      // default to sorting the rate column
+
       var defaultColumn = 2;
       var col = d3.selectAll("thead th")[0][defaultColumn];
       sortColumn(col, defaultColumn);
