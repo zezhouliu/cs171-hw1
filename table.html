@@ -46,9 +46,9 @@
     
       var parsedData = d3.tsv.parseRows(data);
       var headerData = parsedData.shift();
+      headerData.push("Chart");
           
       var zebraFunction = function(d, i) {
-          // console.log("Call zebra d:" + d + " i: " + i);
           if (i % 2 === 1) 
             return "#FFFFFF";
           else
@@ -60,6 +60,13 @@
         if (index < 1) {
           return;
         }
+        else if (index == headerData.indexOf("Chart")) {
+          // if we click on chart header, we should refer this
+          // to clicking by the Rate header (should be shared)
+          index = headerData.indexOf("Rate");
+         
+          header = d3.selectAll("thead th")[0][index];
+       }
 
         // Add a static property as a counter to track
         // the number of times the sorting filter is clicked
@@ -126,21 +133,30 @@
       })
       .on("mouseover", function(d, i) {
       
+        // track which header element should be examined
+        var header = this;
+        
         // Should not allow sorting by rank, which is col 0
         if (i < 1) {
           return;
         }
-        
+        else if (i == headerData.indexOf("Chart")) {
+          // if we're on the Chart header, forward it to Rate
+          // since Rate + Chart directly associated
+          i = headerData.indexOf("Rate");
+          header = d3.selectAll("thead th")[0][i];
+        }
+       
         // Add a static property as a counter to track
         // the number of times the sorting filter is clicked
-        if (!this.staticCounter) {
-          this.staticCounter = 0;
+        if (!header.staticCounter) {
+          header.staticCounter = 0;
         }
         
         var th = d3.select(this);
 
         // if sorted in decreasing order, then show ascending flag
-        if (this.staticCounter % 2 == 0) {
+        if (header.staticCounter % 2 == 0) {
           th.attr("class", "descending"); 
         }
         else {
@@ -180,9 +196,10 @@
           .style('background-color', "#FFFF00");
       })
       .on('mouseout', function(d, i) {
-        d3.selectAll("td.col_" + i)
-          .style('background-color', function (d, i) {
-          
+        if (i == 2) {
+          d3.selectAll("td.col_" + i)
+            .style('background-color', function (d, i) {
+            
               var min = d3.min(d3.selectAll("tbody td.col_2")[0], function(td) {
                 return Math.min(td.innerHTML);
               });
@@ -196,7 +213,12 @@
                 .range(["green", "silver"]);
                 
               return color(d);
-          });
+            });
+         }
+         else {
+          d3.selectAll("td.col_" + i)
+            .style('background-color', null);
+         }
       })
       .style("background-color", function (d, i) {
 
@@ -217,13 +239,14 @@
         }
       });
       
-      /*var max = d3.max(d3.selectAll("td.col_2")[0], function(td) {
-        //return d3.max(td.innerHTML);
-      });
-      */
-      
+      rows.insert("td").append("svg")
+       .attr("width", 50)
+       .attr("height", 23)
+       .append("rect")
+       .attr("height", 23)
+       .attr("width", function(d) { return parseFloat(d[0]); });
 
-      var defaultColumn = 2;
+      var defaultColumn = headerData.indexOf("Rate");
       var col = d3.selectAll("thead th")[0][defaultColumn];
       sortColumn(col, defaultColumn);
       
