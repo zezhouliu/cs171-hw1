@@ -46,7 +46,7 @@
     
       var parsedData = d3.tsv.parseRows(data);
       var headerData = parsedData.shift();
-      
+          
       var zebraFunction = function(d, i) {
           // console.log("Call zebra d:" + d + " i: " + i);
           if (i % 2 === 1) 
@@ -68,6 +68,15 @@
         }
 
         header.staticCounter++;
+        
+        var th = d3.select(header);
+        // if sorted in decreasing order, then show ascending flag
+        if (this.staticCounter % 2 == 0) {
+          th.attr("class", "descending"); 
+        }
+        else {
+          th.attr("class", "ascending");
+        }
         
         tbody.selectAll("tr").sort(function(a, b) {
 
@@ -126,7 +135,7 @@
       })
       .on("mouseover", function(d, i) {
       
-        // Should not allow sorting by rank
+        // Should not allow sorting by rank, which is col 0
         if (i < 1) {
           return;
         }
@@ -182,12 +191,30 @@
       .on('mouseout', function(d, i){
         d3.selectAll("td.col_" + i)
           .style('background-color', null);
+      })
+      .style("background-color", function (d, i) {
+      
+        if (i == 2) {
+          
+          var color = d3.scale.linear()
+            .domain([0, tbody.selectAll("tr")[0].length-1])
+            .interpolate(d3.interpolateRgb)
+            .range(["green", "silver"]);
+            
+          return color(d);
+        }
+          
+           
       });
+      
+      console.log(d3.max(parsedData, function(d) { return d.column1; }));
       
       // default to sorting the rate column
       var defaultColumn = 2;
       var col = d3.selectAll("thead th")[0][defaultColumn];
       sortColumn(col, defaultColumn);
+      
+      
 
     });
 
