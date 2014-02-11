@@ -9,3 +9,5 @@
   - `color(150)`: "#42ffff", a cyan color
 
 3. If the array passed to `domain()` was the minimum and maximum rate values, how would that change the scale? In what situations would this be appropriate?
+  - If we changed the array's min and max values, this would change the scale to only contain values from max to min.
+  - This means our scale will then reflect the values in our data, meaning the minimum will be reflected by the minimum range color, while the max will represent the maximum range color.
