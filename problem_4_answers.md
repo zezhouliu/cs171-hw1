@@ -7,5 +7,5 @@
   - `color(0)`: "#ff4500", looks like normal orange
   - `color(10)`: "#f25e26", a bright orange, brighter than the previous
   - `color(150)`: "#42ffff", a cyan color
-  - 
+
 3. If the array passed to `domain()` was the minimum and maximum rate values, how would that change the scale? In what situations would this be appropriate?
