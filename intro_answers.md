@@ -1,6 +1,6 @@
 1. If we were interested in understanding summary statistics at a glance (minimum, maximum, etc.), how could you improve the display of the table?
 
-We could improve the display of the table by adding a summary section on top of the table that includes several significant data points (i.e. the min, max, mean, etc).  We could also include a visual by adding a boxplot that graphically displays the significant data points in order to better convey the information.
+We could improve the display of the table by adding a summary section on top of the table that includes several significant data points (i.e. the min, max, mean, etc).  We could also include a visual by adding a boxplot that graphically displays the significant data points in order to better convey the information.  
 
 2. Find three varied examples on the web that present tabular data in a different layout or in more visually compelling, complete, interactive or interesting ways.
     2a) Population Reference Bureau.  
