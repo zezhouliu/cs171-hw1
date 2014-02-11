@@ -4,5 +4,8 @@
   - The complete command: `d3.selectAll("tbody tr")[0].length-1` returns the index of the last element of the array.
 
 2. Add the snippet in your code. Describe, in words, what the following function calls return: `color(0)`, `color(10)` and `color(150)`?
+  - `color(0)`: "#ff4500", looks like normal orange
+  - `color(10)`: "#f25e26", a bright orange, brighter than the previous
+  - `color(150)`: "#42ffff", a cyan color
 
 3. If the array passed to `domain()` was the minimum and maximum rate values, how would that change the scale? In what situations would this be appropriate?
