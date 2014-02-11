@@ -10,17 +10,15 @@
     line-height: 1.22em;
   }
 
-  .main-content th, .main-content td {
-    padding: 3px;
-    border-spacing: 0px;
-    border-color: gray;
-    border: 1px;
-  }
 
-  td, th {
+  .main-content th, .main-content td {
+    border-spacing: 0px;
+    border: 1px solid black;
+  }
+  
+  table {
+      border: 1px solid black;
       border-spacing: 0px;
-      border-color: gray;
-      border: 1px;
   }
 
   #caption {
@@ -244,6 +242,7 @@
        .attr("height", 23)
        .append("rect")
        .attr("height", 23)
+       .attr("fill", "green")
        .attr("width", function(d) { return parseFloat(d[0]); });
 
       var defaultColumn = headerData.indexOf("Rate");
