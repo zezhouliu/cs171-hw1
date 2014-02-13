@@ -3,10 +3,11 @@
 <head>
 <script src="http://d3js.org/d3.v3.min.js"></script>
   <style type="text/css">
+
     rect {
-        fill: teal;
         fill-opacity: .8;
     }
+
     text {
         font: 10px sans-serif;
     }
@@ -43,22 +44,31 @@
     d3.tsv("unemp_states_us_nov_2013.tsv", function(data) {
 
     	var reorder = function () {
+
 	  		// Check which button has been pressed
-	  		var btn = this.value;
+	  		var btn = this;
+
+        // create static counter for number of times pressed
+        // reset counter if its the first time it is being pressed
+        if (btn != currentSelected || btn.staticCounter == null) {
+          btn.staticCounter = 0;
+        }
+        btn.staticCounter++;
 
 	  		// console.log(groups.data);
 	  		// handle the case for states
-	  		if (btn == "state") {
+	  		if (btn.value == "state") {
+
+          console.log(btn.staticCounter);
+
 	  			data.sort(function(a, b) {
 
 	          // if not selected, sort by increasing order
-	          if (btn != currentSelected) {
-
+	          if (btn.staticCounter % 2 == 1) {
 	            // if equal priority, sort by name
 	            if (d3.ascending(a.State, b.State) == 0) {
 	              return d3.ascending(a.Rate, b.Rate);
 	            }
-
 	            return d3.ascending(a.State, b.State);
 	          }
 	          else {
@@ -66,9 +76,7 @@
 	            if (d3.descending(a.State, b.State) == 0) {
 	              return d3.descending(a.Rate, b.Rate);
 	            }
-
 	            return d3.descending(a.State, b.State);
-
 	          }
         	})
 	  		}
@@ -76,7 +84,7 @@
 	  			data.sort(function(a, b) {
 
 	          // if not selected, sort by increasing order
-	          if (btn !== currentSelected) {
+	          if (btn.staticCounter % 2 == 1) {
 
 	            // if equal priority, sort by name
 	            if (d3.ascending(a.Rate, b.Rate) == 0) {
@@ -136,7 +144,23 @@
       var bars = groups
         .append("rect")
         .attr("width", function(d) { return xScale(d.Rate); })
-        .attr("height", bar_height);
+        .attr("height", bar_height)
+        .style("fill", function (d, i) {
+
+          var min = d3.min(data, function(d) {
+            return Math.min(d.Rate);
+          });
+          var max = d3.max(data, function(d) {
+            return Math.max(d.Rate);
+          });
+      
+          var color = d3.scale.linear()
+            .domain([min, max])
+            .interpolate(d3.interpolateRgb)
+            .range(["green", "silver"]);
+          
+          return color(d.Rate);
+        });
 
       // Add text for the row values
       groups.append("text")
@@ -165,6 +189,7 @@
             // add a little padding
             return 2;
         })
+        
 
     });
   </script>
