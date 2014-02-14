@@ -19,6 +19,7 @@
   <label><input type="radio" name="order" value="state"> State</label>
   <label><input type="radio" name="order" value="rate" checked> Rate</label>
 
+  <input type="range" name="points" min="0" max="50" step="1" value="50">
   <script type="text/javascript">
 
     var margin = {top: 50, bottom: 10, left:300, right: 40};
@@ -47,6 +48,7 @@
 
 	  		// Check which button has been pressed
 	  		var btn = this;
+        console.log(btn);
 
         // create static counter for number of times pressed
         // reset counter if its the first time it is being pressed
@@ -120,7 +122,22 @@
 
   		// keep track of which button is already selected
   		var currentSelected = null;
-    	d3.selectAll("input").on("click", reorder);
+    	d3.selectAll("input[name=order]").on("click", reorder);
+
+      d3.select("input[name=points]").on("mouseup", function() {
+        var value = this.value;
+
+        groups
+          .transition()
+          .duration(750)
+          .delay(function(d, i) { return i * 10; })
+          .attr("transform", function(d, i) { 
+            if (i <= value)
+              return "translate("+ 0 +", "+ yScale(d.State) +")"; 
+            else
+              return "translate("+ 0 +", "+ 1000 +")"; 
+          }) 
+      });
 
       var max = d3.max(data, function(d) { return d.Rate; } );
       var min = 0;
