@@ -10,3 +10,4 @@
   - The third "g" groups the bars together for the bar chart  
 
 3. Complete the implementation section below. Is there any consequence if you add the `text` elements before or after the `rect` elements? Why?
+  - Yes, because the text elements depend on the existance of the rect elements.  If you dont have the rectangles, it wouldn't be able to determine the location of where to put the text elements.
