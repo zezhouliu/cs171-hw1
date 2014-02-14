@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CS171 Homework 1</title>
+
+  <style type="text/css">
+  /* YOUR CSS */
+  body * {
+    line-height: 1.22em;
+  }
+
+
+  .main-content th, .main-content td {
+    border-spacing: 0px;
+    border: 1px solid black;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+  
+  table {
+      border: 1px solid black;
+      border-spacing: 0px;
+  }
+
+  .caption {
+    border: 1px solid black;
+    border-bottom: none;
+  }
+
+  #ascending {
+    cursor: n-resize;
+  }
+
+  #descending {
+    cursor: s-resize;
+  }
+
+  .active-ascending {
+    background-image:url('img/up.jpg');
+    background-position:left; 
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .active-descending {
+    background-image:url('img/down.jpg');
+    background-position:left; 
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  </style>
+</head>
+<body>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script>
+
+    d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
+    
+      var parsedData = d3.tsv.parseRows(data);
+      var headerData = parsedData.shift();
+      headerData.unshift("Chart");
+          
+      var zebraFunction = function(d, i) {
+          if (i % 2 === 1) 
+            return "#FFFFFF";
+          else
+            return "#C0C0C0"; 
+      };
+
+      var sortColumn = function (header, index) {
+        console.log(index);
+        console.log(header);
+
+        if (index == headerData.indexOf("Rank")) {
+          return;
+        }
+        else if (index == headerData.indexOf("Chart")) {
+          // if we click on chart header, we should refer this
+          // to clicking by the Rate header (should be shared)
+          index = headerData.indexOf("Rate");
+         
+          header = d3.selectAll("thead th")[0][index];
+       }
+
+        // Add a static property as a counter to track
+        // the number of times the sorting filter is clicked
+        if (!header.staticCounter) {
+            header.staticCounter = 0;
+        }
+
+        header.staticCounter++;
+        
+        tbody.selectAll("tr").sort(function(a, b) {
+
+          // if odd # of times clicked, sort by increasing order
+          if (header.staticCounter % 2 == 1) {
+
+            // if equal priority, sort by name
+            if (d3.ascending(a[index - 1], b[index - 1]) == 0) {
+              return d3.ascending(a[1], b[1]);
+            }
+
+            return d3.ascending(a[index - 1], b[index - 1]);
+          }
+          else {
+              
+            // if equal priority, sort by name
+            if (d3.descending(a[index - 1], b[index - 1]) == 0) {
+              return d3.descending(a[1], b[1]);
+            }
+
+            return d3.descending(a[index - 1], b[index - 1]);
+
+          }
+        })
+          
+        .style("background-color", zebraFunction);
+        
+        // reset the other header classes
+        thead.selectAll("th").attr("class", null);
+
+        var th = d3.select(header);
+
+        // if sorted in decreasing order, then show ascending flag
+        if (header.staticCounter % 2 == 0) {
+          th.attr("id", "descending"); 
+          th.attr("class", "active-descending");
+        }
+        else {
+          th.attr("id", "ascending");
+          th.attr("class", "active-ascending");
+        }
+
+      };
+
+
+      // Add the h1 to top of page
+      var header1 = d3.select("body").append("h1")
+      .text("Unemployment Rates for States"); 
+
+      // add the table
+      var table = d3.select("body").append("table")
+      .attr("class", "main-content");
+
+      // Add stuff to the thead 
+      table.append("caption")
+      .attr("class", "caption")
+      .html("Unemployment Rates for States Monthly Rankings Seasonally Adjusted");
+
+      thead = table.append("thead");
+      tbody = table.append("tbody");
+      // Add the column headers
+      var head = thead.selectAll("th")
+      .data(headerData)
+      .enter()
+      .append("th")
+      .text(function(d) { return d;})
+      .on("click", function (d, i) {
+        sortColumn(this, i);
+      })
+      .on("mouseover", function(d, i) {
+      
+        // track which header element should be examined
+        var header = this;
+
+        // Should not allow sorting by rank, which is col 0
+        if (i == headerData.indexOf("Rank")) {
+          return;
+        }
+       
+        // Add a static property as a counter to track
+        // the number of times the sorting filter is clicked
+        if (!header.staticCounter) {
+          header.staticCounter = 0;
+        }
+
+        var th = d3.select(this);
+        
+        // reset the other classes
+        thead.selectAll("th").attr("id", null);
+
+        // if sorted in decreasing order, then show ascending flag
+        if (header.staticCounter % 2 == 0) {
+          th.attr("id", "descending"); 
+        }
+        else {
+          th.attr("id", "ascending");
+        }
+        
+      });
+      
+      // Add stuff to the table bodies
+      var rows = tbody.selectAll("tr")
+      .data(parsedData)
+      .enter()
+      .append("tr")
+      .style("background-color", zebraFunction)
+      .on("mouseover", function(d, i) {
+        d3.select(this).style("background-color", "#FFFF00");
+      })
+      .on("mouseout", function(d, i) {
+        d3.select(this).style("background-color", zebraFunction(d, this.rowIndex - 1));
+      });
+
+      // Add and configure the cells in the table
+      var cells = rows.selectAll("td")
+      .data(function(row) {
+        return d3.range(Object.keys(row).length).map(function(column, i) {
+          return row[Object.keys(row)[i]];
+          });
+        })
+      .enter()
+      .append("td")
+      .text(function(d) { return d; })
+      .attr("class", function (d, i) {
+        return "col_" + i; // assign class to each column
+      })
+      .on('mouseover', function(d, i){
+        d3.selectAll("td.col_" + i)
+          .style("background-color", "#FFFF00");
+      })
+      .on('mouseout', function(d, i) {
+        if (i == 2) {
+          d3.selectAll("td.col_" + i)
+            .style('background-color', function (d, i) {
+            
+              var min = d3.min(d3.selectAll("tbody td.col_2")[0], function(td) {
+                return Math.min(td.innerHTML);
+              });
+              var max = d3.max(d3.selectAll("tbody td.col_2")[0], function(td) {
+                return Math.max(td.innerHTML);
+              });
+          
+              var color = d3.scale.linear()
+                .domain([min, max])
+                .interpolate(d3.interpolateRgb)
+                .range(["silver", "green"]);
+                
+              return color(d);
+            });
+         }
+         else {
+          d3.selectAll("td.col_" + i)
+            .style('background-color', null);
+         }
+      })
+      .style("background-color", function (d, i) {
+
+        if (i == 2) {
+          var min = d3.min(d3.selectAll("tbody td.col_2")[0], function(td) {
+            return Math.min(td.innerHTML);
+          });
+          var max = d3.max(d3.selectAll("tbody td.col_2")[0], function(td) {
+            return Math.max(td.innerHTML);
+          });
+      
+          var color = d3.scale.linear()
+            .domain([min, max])
+            .interpolate(d3.interpolateRgb)
+            .range(["silver", "green"]);
+            
+          return color(d);
+        }
+      });
+      
+      rows.insert("td", ":first-child").append("svg")
+       .attr("width", 50)
+       .attr("height", 23)
+       .append("rect")
+       .attr("height", 23)
+       .attr("fill", "green")
+       .attr("width", function(d) { return parseFloat(d[0]); });
+
+      var defaultColumn = headerData.indexOf("Rate");
+      var col = d3.selectAll("thead th")[0][defaultColumn];
+      sortColumn(col, defaultColumn);
+    
+
+    });
+
+  </script>
+</body>
+</html>

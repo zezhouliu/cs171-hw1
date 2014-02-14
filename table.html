@@ -100,6 +100,16 @@
           
         .style("background-color", zebraFunction);
         
+        var th = d3.select(header);
+
+        // if sorted in decreasing order, then show ascending flag
+        if (header.staticCounter % 2 == 0) {
+          th.attr("class", "descending"); 
+        }
+        else {
+          th.attr("class", "ascending");
+        }
+
       };
 
 
@@ -206,7 +216,7 @@
               var color = d3.scale.linear()
                 .domain([min, max])
                 .interpolate(d3.interpolateRgb)
-                .range(["green", "silver"]);
+                .range(["silver", "green"]);
                 
               return color(d);
             });
@@ -229,7 +239,7 @@
           var color = d3.scale.linear()
             .domain([min, max])
             .interpolate(d3.interpolateRgb)
-            .range(["green", "silver"]);
+            .range(["silver", "green"]);
             
           return color(d);
         }

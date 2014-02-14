@@ -157,7 +157,7 @@
           var color = d3.scale.linear()
             .domain([min, max])
             .interpolate(d3.interpolateRgb)
-            .range(["green", "silver"]);
+            .range(["silver", "green"]);
           
           return color(d.Rate);
         });
@@ -166,7 +166,7 @@
       groups.append("text")
         .attr("x", function(d) { return xScale(d.Rate); })
         .attr("y", function(d) { return bar_height/2; })
-        .text(function(d) { return d.Rate; })
+        .text(function(d) { return d.Rank; })
         .attr("dx", function(d) { 
             // dynamically size based on textsize + slight padding
             return -1 * (this.getBBox().width + 3);
