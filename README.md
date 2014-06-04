@@ -285,4 +285,4 @@ Filtering is an important feature to visually reduce the number of displayed obj
 
 * Filter the bar chart to the top-k elements, where k is the slider's value. 
 * If a bar disappears because it is below the filtering threshold, color it red first and then make it exit the scene by moving it outside the bottom bounds of the chart (ensure you actually remove the element from the DOM).
-* Similarly, to add a bar to the chart, color it green and move it from the bottom of the visualization to its position in the chart.
+* Similarly, to add a bar to the chart, color it green and move it from the bottom of the visualization to its position in the chart.  
