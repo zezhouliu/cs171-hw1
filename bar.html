@@ -1,197 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-  <style type="text/css">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <style type="text/css">
+        rect {
+            fill-opacity: .8;
+        }
 
-    rect {
-        fill-opacity: .8;
-    }
-
-    text {
-        font: 10px sans-serif;
-    }
-  </style>
+        text {
+            font: 10px sans-serif;
+        }
+    </style>
 </head>
 <body>
-
-  <!-- Add Filter Labels --> 
-  <label><input type="radio" name="order" value="state"> State</label>
-  <label><input type="radio" name="order" value="rate" checked> Rate</label>
-
-  <script type="text/javascript">
-
-    var margin = {top: 50, bottom: 10, left:300, right: 40};
-    var width = 900 - margin.left - margin.right;
-    var height = 900 - margin.top - margin.bottom;
-
-    var xScale = d3.scale.linear().range([0, width]);
-    var yScale = d3.scale.ordinal().rangeRoundBands([0, height], .8, 0);
-
-    var bar_height = 15;
-
-    var state = function(d) { return d.State; };
-    var rate = function(d) { return d.Rate; };
-
-
-    var svg = d3.select("body").append("svg")
-      .attr("width", width+margin.left+margin.right)
-      .attr("height", height+margin.top+margin.bottom);
-
-    var g = svg.append("g")
-      .attr("transform", "translate("+margin.left+","+margin.top+")");
-
-    d3.tsv("unemp_states_us_nov_2013.tsv", function(data) {
-
-    	var reorder = function () {
-
-	  		// Check which button has been pressed
-	  		var btn = this;
-
-        // create static counter for number of times pressed
-        // reset counter if its the first time it is being pressed
-        if (btn != currentSelected || btn.staticCounter == null) {
-          btn.staticCounter = 0;
-        }
-        btn.staticCounter++;
-
-	  		// console.log(groups.data);
-	  		// handle the case for states
-	  		if (btn.value == "state") {
-
-          console.log(btn.staticCounter);
-
-	  			data.sort(function(a, b) {
-
-	          // if not selected, sort by increasing order
-	          if (btn.staticCounter % 2 == 1) {
-	            // if equal priority, sort by name
-	            if (d3.ascending(a.State, b.State) == 0) {
-	              return d3.ascending(a.Rate, b.Rate);
-	            }
-	            return d3.ascending(a.State, b.State);
-	          }
-	          else {
-	            // if equal priority, sort by name
-	            if (d3.descending(a.State, b.State) == 0) {
-	              return d3.descending(a.Rate, b.Rate);
-	            }
-	            return d3.descending(a.State, b.State);
-	          }
-        	})
-	  		}
-	  		else {
-	  			data.sort(function(a, b) {
-
-	          // if not selected, sort by increasing order
-	          if (btn.staticCounter % 2 == 1) {
-
-	            // if equal priority, sort by name
-	            if (d3.ascending(a.Rate, b.Rate) == 0) {
-	              return d3.ascending(a.State, b.State);
-	            }
-
-	            return d3.ascending(a.Rate, b.Rate);
-	          }
-	          else {
-	              
-	            // if equal priority, sort by name
-	            if (d3.descending(a.Rate, b.Rate) == 0) {
-	              return d3.descending(a.State, b.State);
-	            }
-
-	            return d3.descending(a.Rate, b.Rate);
-
-	          }
-        	})
-	  		}
-
-	  		currentSelected = btn;
-      	yScale.domain(data.map(state));
-
-	  		groups
-	  			.transition()
-			    .duration(750)
-			    .delay(function(d, i) { return i * 10; })
-			    .attr("transform", function(d, i) { 
-			    	return "translate("+ 0 +", "+ yScale(d.State) +")"; 
-			    }) 
-  		};
-
-  		// keep track of which button is already selected
-  		var currentSelected = null;
-    	d3.selectAll("input").on("click", reorder);
-
-      var max = d3.max(data, function(d) { return d.Rate; } );
-      var min = 0;
-
-      xScale.domain([min, max]);
-      yScale.domain(data.map(state));
-
-      var groups = g.append("g")
-        .selectAll("g")
-        .data(data)
-      .enter()
-        .append("g")
-        .attr("transform", function(d, i) { return "translate(0, " + yScale(d.State) +")"; });
-
-      var header = g
-        .append("text")
-        .text("Unemployment Rates for States")
-        .style("font-size", 20)
-        .style("font-weight", "bold");
-
-      var bars = groups
-        .append("rect")
-        .attr("width", function(d) { return xScale(d.Rate); })
-        .attr("height", bar_height)
-        .style("fill", function (d, i) {
-
-          var min = d3.min(data, function(d) {
-            return Math.min(d.Rate);
-          });
-          var max = d3.max(data, function(d) {
-            return Math.max(d.Rate);
-          });
-      
-          var color = d3.scale.linear()
-            .domain([min, max])
-            .interpolate(d3.interpolateRgb)
-            .range(["silver", "green"]);
-          
-          return color(d.Rate);
-        });
-
-      // Add text for the row values
-      groups.append("text")
-        .attr("x", function(d) { return xScale(d.Rate); })
-        .attr("y", function(d) { return bar_height/2; })
-        .text(function(d) { return d.Rank; })
-        .attr("dx", function(d) { 
-            // dynamically size based on textsize + slight padding
-            return -1 * (this.getBBox().width + 3);
-        })
-        .attr("dy", function(d) {
-            // add a little padding
-            return 2;
-        });
-
-      // Add the text labels for the rows
-      groups.append("text")
-        .attr("x", function(d) { return 0; })
-        .attr("y", function(d) { return bar_height/2; })
-        .text(function(d) { return d.State; })
-        .attr("dx", function(d) { 
-            // dynamically size based on textsize + slight padding
-            return -1 * (this.getBBox().width + 3);
-        })
-        .attr("dy", function(d) {
-            // add a little padding
-            return 2;
-        })
-        
-
-    });
-  </script>
+    <label><input type="radio" name="order" value="state"> State</label>
+    <label><input type="radio" name="order" value="rate" checked> Rate</label>
+    <script src="/js/bar.js"></script>
 </body>
 </html>
